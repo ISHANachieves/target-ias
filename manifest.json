@@ -1,0 +1,9 @@
+{
+  "name": "TARGET-IAS \u2014 UPSC Prelims Test Series",
+  "short_name": "TARGET-IAS",
+  "description": "First-Principles UPSC CSE Prelims Mock Test Series & Error Diagnostics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0F172A"
+}

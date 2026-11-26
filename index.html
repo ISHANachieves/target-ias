@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TARGET-IAS | First-Principles UPSC Prelims Test Series</title>
+  <meta name="theme-color" content="#0F172A" />
+  <link rel="manifest" href="/manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    .no-copy { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+    .watermark-layer {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      overflow: hidden;
+      opacity: 0.055;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4rem;
+      transform: rotate(-22deg) scale(1.25);
+      align-content: center;
+      justify-items: center;
+    }
+    .line-strike { text-decoration: line-through; opacity: 0.45; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Dynamic Anti-Piracy Watermark (shown during Exam & Solution Review) -->
+  <div id="watermark" class="watermark-layer hidden"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 border-b border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <button onclick="navigate('landing')" class="flex items-center gap-2 text-left">
+        <span class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm">TI</span>
+        <div>
+          <div class="font-bold tracking-tight leading-none text-base">TARGET-IAS</div>
+          <div class="text-[10px] text-slate-400 tracking-wider uppercase">First-Principles Prelims</div>
+        </div>
+      </button>
+
+      <nav class="hidden md:flex items-center gap-1 text-sm">
+        <button onclick="navigate('dashboard')" class="px-3 py-1.5 rounded-md hover:bg-slate-800 transition">Mock Tests</button>
+        <button onclick="navigate('bookmarks')" class="px-3 py-1.5 rounded-md hover:bg-slate-800 transition">Bookmarks</button>
+        <button onclick="navigate('pricing')" class="px-3 py-1.5 rounded-md hover:bg-slate-800 transition">Pricing</button>
+        <button onclick="openAdminGate()" class="px-3 py-1.5 rounded-md text-amber-300 hover:bg-slate-800 transition">Admin</button>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <span id="nav-badge" class="hidden sm:inline-flex text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-700">Free Plan</span>
+        <button onclick="openLoginModal()" id="nav-user-btn" class="text-xs sm:text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-3 py-1.5 rounded-lg transition">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main id="app" class="flex-1 max-w-7xl w-full mx-auto px-4 py-6 pb-24 md:pb-10"></main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav id="mobile-nav" class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 z-30 flex justify-around py-2 text-[11px] font-medium text-slate-600 shadow-lg">
+    <button onclick="navigate('dashboard')" class="flex flex-col items-center gap-0.5 px-3 py-1">
+      <span>📝</span><span>Mocks</span>
+    </button>
+    <button onclick="navigate('bookmarks')" class="flex flex-col items-center gap-0.5 px-3 py-1">
+      <span>🔖</span><span>Bookmarks</span>
+    </button>
+    <button onclick="navigate('pricing')" class="flex flex-col items-center gap-0.5 px-3 py-1">
+      <span>💳</span><span>Unlock</span>
+    </button>
+    <button onclick="openAdminGate()" class="flex flex-col items-center gap-0.5 px-3 py-1 text-slate-800">
+      <span>⚙️</span><span>Admin</span>
+    </button>
+  </nav>
+
+  <!-- Mandatory Compliance Footer (Required for Razorpay KYC Approval) -->
+  <footer id="site-footer" class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mb-14 md:mb-0">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div>© 2026 <strong class="text-white">TARGET-IAS</strong>. Independent UPSC CSE Prelims Test Platform.</div>
+      <div class="flex flex-wrap justify-center gap-4">
+        <button onclick="openPolicyModal('terms')" class="hover:text-white underline">Terms & Conditions</button>
+        <button onclick="openPolicyModal('privacy')" class="hover:text-white underline">Privacy Policy</button>
+        <button onclick="openPolicyModal('refund')" class="hover:text-white underline">Refund & Cancellation</button>
+        <button onclick="openPolicyModal('contact')" class="hover:text-white underline">Contact Us</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Reusable Modal -->
+  <div id="modal-overlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div id="modal-box" class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-200 p-6"></div>
+  </div>
+
+<script>
+/* ========================
+   SEED DATA (UPSC 2026-27 PATTERN)
+   ======================== */
+const DEFAULT_TESTS = [
+  {
+    id: "open-mock-01",
+    title: "All-India Open Mock 01 (Free Diagnostic)",
+    category: "Open Mock",
+    paperType: "GS",
+    durationMins: 30,
+    isFree: true,
+    syllabus: "Polity, Economy, IR, Environment & Sci-Tech (Current-to-Static)",
+    questions: [
+      {
+        no: 1,
+        subject: "Polity",
+        topic: "Electoral Rolls & ECI",
+        text: "With reference to the revision of electoral rolls in India, consider the following pairs:\n1. Form 6 — Application by a new voter for inclusion in the electoral roll\n2. Form 7 — Objection to inclusion or request for deletion of a name\n3. Form 8 — Restoration of an erroneously deleted voter's old EPIC number without verification\n4. Rule 21(1), Registration of Electors Rules, 1960 — Empowers EROs to process delayed enumeration forms and restore old EPIC numbers\n\nHow many of the pairs given above are correctly matched?",
+        options: ["Only one", "Only two", "Only three", "All four"],
+        correct: 2,
+        axiom: "The Registration of Electors Rules, 1960 assign distinct statutory forms for fresh enrolment (Form 6), deletion/objection (Form 7), and correction/shifting by existing electors (Form 8).",
+        deduction: "Pairs 1, 2, and 4 are accurately matched. Pair 3 is incorrect because Form 8 is used by already registered electors to update particulars like change of residence—not unverified restoration.",
+        trap: "Students often confuse Form 8 with remedial restoration mechanisms, missing that Rule 21(1) specifically governs restoration of old EPIC numbers."
+      },
+      {
+        no: 2,
+        subject: "Polity",
+        topic: "Scheduled Areas & RFCTLARR 2013",
+        text: "Consider the following statements:\nStatement-I: The Supreme Court quashed a land acquisition process for limestone mining in Odisha's Sundargarh district even though the acquisition was initiated by the State government.\nStatement-II: Under Section 41 of the RFCTLARR Act, 2013, prior consent of the Gram Sabha is mandatory in Scheduled Areas, and acquisition for a private company additionally requires consent of at least 80% of affected families alongside a Social Impact Assessment (SIA).\n\nWhich one of the following is correct in respect of the above statements?",
+        options: [
+          "Both Statement-I and Statement-II are correct and Statement-II explains Statement-I",
+          "Both Statement-I and Statement-II are correct, but Statement-II does not explain Statement-I",
+          "Statement-I is correct, but Statement-II is incorrect",
+          "Statement-I is incorrect, but Statement-II is correct"
+        ],
+        correct: 0,
+        axiom: "Fifth Schedule governance and Section 41 of the RFCTLARR Act, 2013 treat Gram Sabha consent as a mandatory constitutional-statutory safeguard, not a discretionary formality.",
+        deduction: "The Supreme Court overruled the High Court's view that State-initiated acquisition bypasses consent. Because the land was ultimately for a private cement firm in a Scheduled Area, both Gram Sabha consent and 80% family consent + SIA were binding.",
+        trap: "Many aspirants assume State-government acquisition automatically waives the 80% private-company consent threshold."
+      },
+      {
+        no: 3,
+        subject: "Economy",
+        topic: "Critical Minerals Supply Chain",
+        text: "Consider the following statements:\nStatement-I: Successfully auctioning critical mineral blocks alone cannot guarantee India's industrial material security for electric vehicles and clean-energy manufacturing.\nStatement-II: Turning mined ore into battery-grade inputs requires advanced beneficiation and refining capacities—a midstream segment currently dominated globally by China.\nStatement-III: Under the National Critical Mineral Mission, a dedicated scheme targets recycling 400 kilotonnes of critical minerals from tailings, fly ash, red mud, and end-of-life products by 2031.\n\nWhich one of the following is correct in respect of the above statements?",
+        options: [
+          "Both Statement-II and Statement-III are correct and both of them explain Statement-I",
+          "Both Statement-II and Statement-III are correct, but only one of them explains Statement-I",
+          "Only one of the Statements II and III is correct and that explains Statement-I",
+          "Neither Statement-II nor Statement-III is correct"
+        ],
+        correct: 1,
+        axiom: "Resource extraction (upstream mining) is distinct from industrial readiness (midstream beneficiation and refining).",
+        deduction: "All three statements are factually true. However, only Statement-II explains WHY block auctions alone fail to deliver usable battery materials; Statement-III describes a complementary recycling solution rather than the cause.",
+        trap: "Classic UPSC 3-statement trap: confusing a true complementary policy fact (Statement-III) with a causal explanation of Statement-I."
+      },
+      {
+        no: 4,
+        subject: "International Relations",
+        topic: "ICJ vs ICC Jurisdiction",
+        text: "Consider the following statements:\nStatement-I: In its landmark Rohingya judgment, the International Court of Justice (ICJ) held the state of Myanmar responsible for violating the Genocide Convention and ordered reparations, rather than sentencing individual military commanders to prison.\nStatement-II: Unlike the International Criminal Court (ICC), which exercises criminal jurisdiction over individuals, the ICJ settles contentious legal disputes between states and adjudicates state responsibility under international treaties.\n\nWhich one of the following is correct in respect of the above statements?",
+        options: [
+          "Both Statement-I and Statement-II are correct and Statement-II explains Statement-I",
+          "Both Statement-I and Statement-II are correct, but Statement-II does not explain Statement-I",
+          "Statement-I is correct, but Statement-II is incorrect",
+          "Statement-I is incorrect, but Statement-II is correct"
+        ],
+        correct: 0,
+        axiom: "ICJ = Principal judicial organ of the UN adjudicating State vs. State disputes; ICC = Independent treaty court under the Rome Statute prosecuting individuals.",
+        deduction: "Because the ICJ lacks criminal jurisdiction over individual officers, its 9–6 genocide ruling bound the State of Myanmar to make reparations and prosecute perpetrators domestically.",
+        trap: "Students routinely blur the ICJ and ICC because both sit in The Hague and deal with genocide."
+      },
+      {
+        no: 5,
+        subject: "Economy",
+        topic: "RBI Monetary Policy Corridor",
+        text: "Consider the following statements regarding the Standing Deposit Facility (SDF) used by the Reserve Bank of India:\n1. It absorbs excess liquidity from the banking system without requiring the RBI to pledge government securities as collateral.\n2. The SDF rate is positioned below the policy repo rate and serves as the floor of the Liquidity Adjustment Facility (LAF) corridor.\n\nWhich of the statements given above is/are correct?",
+        options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
+        correct: 2,
+        axiom: "In the LAF corridor, MSF forms the ceiling (+25 bps above Repo) and SDF forms the floor (-25 bps below Repo).",
+        deduction: "Unlike fixed-rate reverse repo, SDF removes the collateral constraint on the RBI's balance sheet during massive liquidity surges, making both statements correct.",
+        trap: "Candidates often swap the collateral rule between Reverse Repo (collateralised) and SDF (uncollateralised)."
+      },
+      {
+        no: 6,
+        subject: "Environment",
+        topic: "Climate Governance & IEA",
+        text: "Consider the following statements:\n1. The World Energy Outlook is the flagship annual report of the International Energy Agency (IEA), of which India is a full OECD member.\n2. The Carbon Border Adjustment Mechanism (CBAM) is a unilateral trade-related climate measure flagged by developing countries at COP negotiations.\n3. Lake Chilika in Odisha is Asia's largest brackish water lagoon and one of India's earliest Ramsar sites.\n\nHow many of the statements given above are correct?",
+        options: ["Only one", "Only two", "All three", "None"],
+        correct: 1,
+        axiom: "Full IEA membership strictly requires OECD membership; India participates as an Associate Member.",
+        deduction: "Statements 2 and 3 are completely correct. Statement 1 fails because India is not an OECD member and therefore holds Associate Member status at the IEA.",
+        trap: "Anchoring the sentence on a famous true fact (IEA publishes World Energy Outlook) while hiding a fatal error at the end (full OECD member)."
+      },
+      {
+        no: 7,
+        subject: "Science & Tech",
+        topic: "Deep Space Exploration",
+        text: "With reference to NASA's Voyager 1 spacecraft, consider the following statements:\n1. It is powered in interstellar space by high-efficiency solar photovoltaic panels.\n2. NASA communicates with it through the Deep Space Network (DSN) operating stations in the United States, Spain, and Australia.\n3. Its Golden Record cover uses a pulsar map to mark Earth's location.\n\nHow many of the statements given above are correct?",
+        options: ["Only one", "Only two", "All three", "None"],
+        correct: 1,
+        axiom: "Solar irradiance falls off with the inverse square of distance ($1/r^2$), making solar panels unusable in the outer solar system and interstellar space.",
+        deduction: "Statements 2 and 3 are correct. Statement 1 is wrong because Voyager 1 relies on Radioisotope Thermoelectric Generators (RTGs) powered by the radioactive decay of Plutonium-238.",
+        trap: "Assuming spacecraft universally rely on solar arrays without applying the inverse-square physics constraint."
+      },
+      {
+        no: 8,
+        subject: "Geography",
+        topic: "Mapping & Chokepoints",
+        text: "Consider the following pairs of places in the news:\n1. Kerch Bridge — Connects mainland Russia to the Crimean Peninsula\n2. Rakhine State — Coastal state in northern Myanmar bordering Bangladesh\n3. Strait of Hormuz — Strategic chokepoint connecting the Red Sea to the Gulf of Aden\n\nHow many of the pairs given above are correctly matched?",
+        options: ["Only one", "Only two", "All three", "None"],
+        correct: 1,
+        axiom: "Persian Gulf <-> Strait of Hormuz <-> Gulf of Oman; Red Sea <-> Bab-el-Mandeb <-> Gulf of Aden.",
+        deduction: "Pairs 1 and 2 are accurate. Pair 3 swaps the Strait of Hormuz with the Bab-el-Mandeb strait.",
+        trap: "Both chokepoints sit around the Arabian Peninsula and dominate West Asia oil-shipping headlines."
+      }
+    ]
+  },
+  {
+    id: "gs-econ-01",
+    title: "GS Sectional 01: Indian Economy & Labour Codes",
+    category: "GS Sectional",
+    paperType: "GS",
+    durationMins: 30,
+    isFree: false,
+    syllabus: "Macroeconomics, EPFO Reforms, Labour Codes & Trade",
+    questions: [
+      {
+        no: 1,
+        subject: "Economy",
+        topic: "Macroeconomics & AI Productivity",
+        text: "Consider the following statements:\nStatement-I: If Artificial Intelligence raises labour productivity significantly without a commensurate rise in real wages, the wage share of total output declines, which can weaken aggregate consumption demand.\nStatement-II: In Hyman Minsky's financial framework, 'Ponzi finance' describes a state where highly leveraged borrowers cannot pay even interest obligations from cash flows and must take fresh loans to service existing debt.\n\nWhich one of the following is correct?",
+        options: [
+          "Both Statement-I and Statement-II are correct and Statement-II explains Statement-I",
+          "Both Statement-I and Statement-II are correct, but Statement-II does not explain Statement-I",
+          "Statement-I is correct, but Statement-II is incorrect",
+          "Statement-I is incorrect, but Statement-II is correct"
+        ],
+        correct: 1,
+        axiom: "Wage Share = Real Wages / Labour Productivity. Workers have a higher marginal propensity to consume than capital owners.",
+        deduction: "Both macroeconomic propositions are true, but Minsky's Ponzi finance describes debt-cycle fragility rather than explaining why falling wage share reduces consumption demand.",
+        trap: "Picking Option (a) simply because both statements relate to AI macroeconomics."
+      },
+      {
+        no: 2,
+        subject: "Economy",
+        topic: "Labour Codes & Taxation",
+        text: "With reference to India's Labour Codes and employment framework, consider the following statements:\n1. Under the Industrial Relations Code, Labour Courts have been replaced by Industrial Tribunals.\n2. Severance pay received upon layoff in India is fully exempted from income tax.\n3. The 'reservation wage' is the minimum wage below which a worker is unwilling to sell their labour.\n\nWhich of the statements given above are correct?",
+        options: ["1 and 2 only", "2 and 3 only", "1 and 3 only", "1, 2 and 3"],
+        correct: 2,
+        axiom: "Under the Income Tax Act, termination compensation is taxed as 'profit in lieu of salary' or 'income from other sources'.",
+        deduction: "Statements 1 and 3 are correct. Statement 2 is false because severance payouts are generally taxable.",
+        trap: "Assuming welfare-oriented layoff compensation enjoys blanket tax exemption."
+      }
+    ]
+  },
+  {
+    id: "csat-01",
+    title: "CSAT Paper II: Reasoning & Comprehension Mock 01",
+    category: "CSAT",
+    paperType: "CSAT",
+    durationMins: 30,
+    isFree: false,
+    syllabus: "Logical Inference, Numeracy & Elimination",
+    questions: [
+      {
+        no: 1,
+        subject: "CSAT",
+        topic: "Reading Comprehension",
+        text: "Passage: 'Auctioning mineral blocks creates access to geological reserves, yet industrial self-reliance remains elusive unless domestic beneficiation, refining, and end-of-life recycling scale simultaneously. Otherwise, raw ore is merely exported and repurchased at a premium as processed battery components.'\n\nWhich one of the following best reflects the crux of the passage?",
+        options: [
+          "Mineral block auctions should be halted until recycling reaches 100%.",
+          "True material security requires integrating midstream processing and recycling alongside mining.",
+          "India lacks geological reserves of critical minerals required for batteries.",
+          "Exporting raw ore is more profitable than building domestic refineries."
+        ],
+        correct: 1,
+        axiom: "A 'crux' question requires the central synthesis of the author's argument without extreme extrapolations.",
+        deduction: "Option (b) directly captures the integration of mining, refining, and recycling. Options (a), (c), and (d) distort or contradict the text.",
+        trap: "Option (a) uses extreme wording ('halted', '100%') not supported by the passage."
+      },
+      {
+        no: 2,
+        subject: "CSAT",
+        topic: "Quantitative Aptitude",
+        text: "In a UPSC Prelims GS paper of 100 questions (+2 for correct, -0.66 for wrong), a candidate attempts 80 questions and achieves 75% accuracy on attempted questions. What is the approximate net score?",
+        options: ["106.8", "113.4", "120.0", "98.6"],
+        correct: 0,
+        axiom: "Net Score = (Correct × 2) - (Incorrect × 0.66).",
+        deduction: "75% of 80 attempted = 60 correct (+120 marks) and 20 incorrect (-13.2 marks). Net = 120 - 13.2 = 106.8.",
+        trap: "Forgetting to deduct negative marks on the 20 wrong attempts leads directly to 120.0 (Option c)."
+      }
+    ]
+  }
+];
+
+/* ========================
+   STATE & PERSISTENCE
+   ======================== */
+const LS_KEYS = {
+  USER: "tias_user_v1",
+  TESTS: "tias_tests_v1",
+  ATTEMPTS: "tias_attempts_v1",
+  BOOKMARKS: "tias_bookmarks_v1",
+  CONFIG: "tias_config_v1"
+};
+
+let state = {
+  view: "landing", // landing | dashboard | exam | results | bookmarks | pricing | admin
+  user: JSON.parse(localStorage.getItem(LS_KEYS.USER) || "null"),
+  tests: JSON.parse(localStorage.getItem(LS_KEYS.TESTS) || "null") || DEFAULT_TESTS,
+  attempts: JSON.parse(localStorage.getItem(LS_KEYS.ATTEMPTS) || "[]"),
+  bookmarks: JSON.parse(localStorage.getItem(LS_KEYS.BOOKMARKS) || "[]"),
+  config: JSON.parse(localStorage.getItem(LS_KEYS.CONFIG) || "null") || {
+    bundlePrice: 1499,
+    couponCode: "TARGET20",
+    couponDiscount: 20,
+    externalCheckoutUrl: "", // Optional free payment link (Topmate / Razorpay Payment Page)
+    adminPasscode: "target2026",
+    supportEmail: "support@targetias.in"
+  },
+  // Live Exam State
+  activeTest: null,
+  qIndex: 0,
+  answers: {},      // { qIdx: optIdx }
+  visited: {},      // { qIdx: true }
+  marked: {},       // { qIdx: true }
+  strikes: {},      // { "qIdx-optIdx": true }
+  timeSpent: {},    // { qIdx: seconds }
+  remainingSecs: 0,
+  timerId: null,
+  paletteOpen: false,
+  // Results State
+  activeAttemptId: null,
+  reviewFilter: "all",
+  appliedCoupon: "",
+  adminUnlocked: false
+};
+
+function saveState() {
+  localStorage.setItem(LS_KEYS.USER, JSON.stringify(state.user));
+  localStorage.setItem(LS_KEYS.TESTS, JSON.stringify(state.tests));
+  localStorage.setItem(LS_KEYS.ATTEMPTS, JSON.stringify(state.attempts));
+  localStorage.setItem(LS_KEYS.BOOKMARKS, JSON.stringify(state.bookmarks));
+  localStorage.setItem(LS_KEYS.CONFIG, JSON.stringify(state.config));
+}
+
+function isPaid() {
+  return state.user && state.user.plan === "paid";
+}
+
+function updateHeader() {
+  const btn = document.getElementById("nav-user-btn");
+  const badge = document.getElementById("nav-badge");
+  if (state.user) {
+    btn.textContent = state.user.email.split("@")[0];
+    badge.classList.remove("hidden");
+    badge.classList.add("sm:inline-flex");
+    if (isPaid()) {
+      badge.textContent = "PRO UNLOCKED";
+      badge.className = "hidden sm:inline-flex text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+    } else {
+      badge.textContent = "Free Plan";
+      badge.className = "hidden sm:inline-flex text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700";
+    }
+  } else {
+    btn.textContent = "Sign In";
+    badge.classList.add("hidden");
+  }
+}
+
+function setWatermark(active) {
+  const wm = document.getElementById("watermark");
+  if (!active) {
+    wm.classList.add("hidden");
+    document.body.classList.remove("no-copy");
+    document.oncontextmenu = null;
+    return;
+  }
+  const label = state.user ? state.user.email : "aspirant@targetias.in";
+  wm.innerHTML = Array(12).fill(`<div class="text-slate-900 font-bold text-sm tracking-widest uppercase whitespace-nowrap">${escapeHtml(label)} • TARGET-IAS</div>`).join("");
+  wm.classList.remove("hidden");
+  document.body.classList.add("no-copy");
+  document.oncontextmenu = () => false;
+}
+
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, s => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[s]));
+}
+
+function navigate(view) {
+  if (state.view === "exam" && view !== "exam") {
+    if (!confirm("Leave the live mock test? Your current timer will stop.")) return;
+    stopTimer();
+  }
+  state.view = view;
+  setWatermark(view === "exam" || view === "results");
+  document.getElementById("site-footer").classList.toggle("hidden", view === "exam");
+  document.getElementById("mobile-nav").classList.toggle("hidden", view === "exam");
+  window.scrollTo(0, 0);
+  render();
+}
+
+/* ========================
+   AUTH & MODALS
+   ======================== */
+function showModal(html) {
+  const overlay = document.getElementById("modal-overlay");
+  document.getElementById("modal-box").innerHTML = html;
+  overlay.classList.remove("hidden");
+  overlay.classList.add("flex");
+}
+function closeModal() {
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.add("hidden");
+  overlay.classList.remove("flex");
+}
+
+function openLoginModal(onSuccess) {
+  window._afterLogin = onSuccess || null;
+  const existingEmail = state.user ? state.user.email : "";
+  showModal(`
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-slate-900">Sign In to TARGET-IAS</h3>
+      <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button>
+    </div>
+    <p class="text-xs text-slate-500 mb-4">Enter your email to track scores, bookmarks, and unlock mock tests. Your email also serves as your exam screen watermark.</p>
+    <form onsubmit="handleLogin(event)" class="space-y-3">
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+        <input id="login-email" type="email" required value="${escapeHtml(existingEmail)}" placeholder="aspirant@example.com" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-slate-900 outline-none" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+        <input id="login-name" type="text" required value="${escapeHtml(state.user?.name || "")}" placeholder="Your Name" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-slate-900 outline-none" />
+      </div>
+      <button type="submit" class="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm">Continue</button>
+    </form>
+    ${state.user ? `<button onclick="logout()" class="mt-3 w-full py-2 text-xs text-red-600 font-semibold hover:underline">Sign Out</button>` : ""}
+  `);
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value.trim().toLowerCase();
+  const name = document.getElementById("login-name").value.trim();
+  const prevPlan = state.user && state.user.email === email ? state.user.plan : "free";
+  state.user = { email, name, plan: prevPlan };
+  saveState();
+  updateHeader();
+  closeModal();
+  if (typeof window._afterLogin === "function") {
+    const fn = window._afterLogin;
+    window._afterLogin = null;
+    fn();
+  } else {
+    render();
+  }
+}
+
+function logout() {
+  state.user = null;
+  saveState();
+  updateHeader();
+  closeModal();
+  navigate("landing");
+}
+
+function openPolicyModal(type) {
+  const email = escapeHtml(state.config.supportEmail);
+  const policies = {
+    terms: {
+      title: "Terms & Conditions",
+      body: `<p>Welcome to <strong>TARGET-IAS</strong>. By enrolling in our UPSC CSE Prelims Mock Test Series, you agree that all questions, 3-layer First-Principles explanations, and analytics are licensed strictly for individual, non-commercial exam preparation.</p><p class="mt-2">Redistribution, screen-recording, or sharing test content on third-party channels (including Telegram groups) will result in immediate termination of account access without refund.</p>`
+    },
+    privacy: {
+      title: "Privacy Policy",
+      body: `<p>We collect only your name, email address, and test performance analytics to provide personalized scorecards and exam access.</p><p class="mt-2">All online payments are processed securely by <strong>Razorpay</strong> (PCI-DSS compliant). TARGET-IAS never stores your card, UPI PIN, or banking credentials on its servers.</p>`
+    },
+    refund: {
+      title: "Refund & Cancellation Policy",
+      body: `<p>Because TARGET-IAS provides immediate digital access to downloadable/online mock tests and explanation banks, purchases of digital test series bundles are generally <strong>non-refundable</strong> once activated.</p><p class="mt-2">In case of a duplicate transaction or technical payment deduction where access was not granted, email <strong>${email}</strong> with your Razorpay Payment ID within 7 days for a full refund processed to your original payment source within 5–7 business days.</p>`
+    },
+    contact: {
+      title: "Contact Us",
+      body: `<p>For enrollment queries, technical assistance, or payment support:</p><ul class="list-disc pl-5 mt-2 space-y-1"><li><strong>Brand:</strong> TARGET-IAS</li><li><strong>Support Email:</strong> ${email}</li><li><strong>Response Window:</strong> Monday to Saturday, 10:00 AM – 6:00 PM IST</li></ul>`
+    }
+  };
+  const p = policies[type];
+  showModal(`
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="text-lg font-bold text-slate-900">${p.title}</h3>
+      <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button>
+    </div>
+    <div class="text-sm text-slate-600 leading-relaxed">${p.body}</div>
+    <button onclick="closeModal()" class="mt-5 w-full py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold">Close</button>
+  `);
+}
+
+/* ========================
+   RAZORPAY + FREE PAYMENT FLOW
+   ======================== */
+function getFinalPrice() {
+  const base = Number(state.config.bundlePrice) || 1499;
+  if (state.appliedCoupon && state.appliedCoupon.toUpperCase() === state.config.couponCode.toUpperCase()) {
+    return Math.round(base * (1 - (Number(state.config.couponDiscount) || 20) / 100));
+  }
+  return base;
+}
+
+function applyCoupon() {
+  const input = document.getElementById("coupon-input").value.trim().toUpperCase();
+  if (input === state.config.couponCode.toUpperCase()) {
+    state.appliedCoupon = input;
+    render();
+  } else {
+    alert(`Invalid coupon code. Try "${state.config.couponCode}".`);
+  }
+}
+
+async function initiateRazorpayPayment() {
+  if (!state.user) {
+    openLoginModal(() => initiateRazorpayPayment());
+    return;
+  }
+
+  const payBtn = document.getElementById("rzp-pay-btn");
+  if (payBtn) {
+    payBtn.disabled = true;
+    payBtn.textContent = "Connecting to Razorpay...";
+  }
+
+  try {
+    // 1. Create verified order via Vercel Serverless Function (/api/create-order)
+    const orderRes = await fetch("/api/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        coupon: state.appliedCoupon,
+        email: state.user.email
+      })
+    });
+
+    const orderData = await orderRes.json();
+    if (!orderRes.ok) {
+      throw new Error(orderData.error || "Could not create Razorpay order.");
+    }
+
+    // 2. Open Razorpay Standard Checkout Modal (UPI, Cards, Netbanking)
+    const options = {
+      key: orderData.keyId,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: "TARGET-IAS",
+      description: "UPSC Prelims Complete Test Series Bundle",
+      order_id: orderData.orderId,
+      prefill: {
+        name: state.user.name,
+        email: state.user.email
+      },
+      theme: { color: "#0F172A" },
+      handler: async function (response) {
+        // 3. Verify cryptographic signature on Vercel Backend (/api/verify-payment)
+        const verifyRes = await fetch("/api/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          })
+        });
+        const verifyData = await verifyRes.json();
+        if (verifyRes.ok && verifyData.verified) {
+          state.user.plan = "paid";
+          state.user.paymentId = verifyData.paymentId;
+          saveState();
+          updateHeader();
+          alert("Payment Verified! All TARGET-IAS paid mock tests are now unlocked.");
+          navigate("dashboard");
+        } else {
+          alert("Payment signature verification failed. Please contact support with Payment ID: " + response.razorpay_payment_id);
+        }
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.on("payment.failed", function (resp) {
+      alert("Payment failed: " + (resp.error?.description || "Please try again."));
+    });
+    rzp.open();
+  } catch (err) {
+    showModal(`
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-base font-bold text-slate-900">Razorpay Setup Required</h3>
+        <button onclick="closeModal()" class="text-slate-400 text-xl">&times;</button>
+      </div>
+      <p class="text-sm text-slate-600 mb-3">${escapeHtml(err.message)}</p>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 space-y-1 mb-4">
+        <div class="font-bold">To activate live Razorpay on Vercel (Free):</div>
+        <div>1. Open your Vercel Project → <strong>Settings → Environment Variables</strong>.</div>
+        <div>2. Add <code>RAZORPAY_KEY_ID</code> and <code>RAZORPAY_KEY_SECRET</code>.</div>
+        <div>3. Tap <strong>Redeploy</strong>.</div>
+      </div>
+      ${state.config.externalCheckoutUrl ? `<a href="${escapeHtml(state.config.externalCheckoutUrl)}" target="_blank" class="block text-center w-full py-2.5 mb-2 rounded-lg bg-emerald-600 text-white font-semibold text-sm">Pay via Hosted Payment Link ↗</a>` : ""}
+      <button onclick="unlockDemoMode()" class="w-full py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm">Unlock Locally (Preview Test Mode)</button>
+    `);
+  } finally {
+    if (payBtn) {
+      payBtn.disabled = false;
+      payBtn.textContent = `Pay ₹${getFinalPrice()} via Razorpay (UPI / Card)`;
+    }
+  }
+}
+
+function unlockDemoMode() {
+  if (!state.user) {
+    state.user = { email: "aspirant@targetias.in", name: "Aspirant", plan: "paid" };
+  } else {
+    state.user.plan = "paid";
+  }
+  saveState();
+  updateHeader();
+  closeModal();
+  navigate("dashboard");
+}
+
+/* ========================
+   EXAM ENGINE LOGIC
+   ======================== */
+function startTest(testId) {
+  const test = state.tests.find(t => t.id === testId);
+  if (!test) return;
+  if (!state.user) {
+    openLoginModal(() => startTest(testId));
+    return;
+  }
+  if (!test.isFree && !isPaid()) {
+    navigate("pricing");
+    return;
+  }
+  state.activeTest = test;
+  state.qIndex = 0;
+  state.answers = {};
+  state.visited = { 0: true };
+  state.marked = {};
+  state.strikes = {};
+  state.timeSpent = {};
+  state.remainingSecs = (test.durationMins || 120) * 60;
+  state.paletteOpen = false;
+  navigate("exam");
+  startTimer();
+}
+
+function startTimer() {
+  stopTimer();
+  state.timerId = setInterval(() => {
+    state.remainingSecs--;
+    state.timeSpent[state.qIndex] = (state.timeSpent[state.qIndex] || 0) + 1;
+    const timerEl = document.getElementById("exam-timer");
+    if (timerEl) {
+      timerEl.textContent = formatTime(state.remainingSecs);
+      if (state.remainingSecs <= 900) {
+        timerEl.classList.add("bg-red-600", "text-white", "animate-pulse");
+        timerEl.classList.remove("bg-slate-800", "text-emerald-300");
+      }
+    }
+    if (state.remainingSecs <= 0) {
+      stopTimer();
+      submitExam(true);
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (state.timerId) {
+    clearInterval(state.timerId);
+    state.timerId = null;
+  }
+}
+
+function formatTime(secs) {
+  const s = Math.max(0, secs);
+  const h = String(Math.floor(s / 3600)).padStart(2, "0");
+  const m = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+  const sec = String(s % 60).padStart(2, "0");
+  return `${h}:${m}:${sec}`;
+}
+
+function selectOption(optIdx) {
+  state.answers[state.qIndex] = optIdx;
+  render();
+}
+function toggleStrike(e, optIdx) {
+  e.stopPropagation();
+  const key = `${state.qIndex}-${optIdx}`;
+  state.strikes[key] = !state.strikes[key];
+  render();
+}
+function clearResponse() {
+  delete state.answers[state.qIndex];
+  render();
+}
+function markAndNext() {
+  state.marked[state.qIndex] = !state.marked[state.qIndex];
+  goToQuestion((state.qIndex + 1) % state.activeTest.questions.length);
+}
+function saveAndNext() {
+  goToQuestion((state.qIndex + 1) % state.activeTest.questions.length);
+}
+function goToQuestion(idx) {
+  state.qIndex = idx;
+  state.visited[idx] = true;
+  state.paletteOpen = false;
+  render();
+}
+
+function confirmSubmitExam() {
+  const total = state.activeTest.questions.length;
+  const answered = Object.keys(state.answers).length;
+  showModal(`
+    <h3 class="text-lg font-bold text-slate-900 mb-2">Submit ${escapeHtml(state.activeTest.title)}?</h3>
+    <p class="text-sm text-slate-600 mb-4">You have answered <strong>${answered}</strong> out of <strong>${total}</strong> questions. Unanswered questions carry zero negative marks.</p>
+    <div class="flex gap-3">
+      <button onclick="closeModal()" class="flex-1 py-2.5 rounded-lg border border-slate-300 font-semibold text-sm">Resume Test</button>
+      <button onclick="closeModal(); submitExam(false);" class="flex-1 py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm">Confirm Submit</button>
+    </div>
+  `);
+}
+
+function submitExam(auto) {
+  stopTimer();
+  const test = state.activeTest;
+  const posMark = test.paperType === "CSAT" ? 2.5 : 2.0;
+  const negMark = test.paperType === "CSAT" ? 0.83 : 0.66;
+  let correct = 0, incorrect = 0, unattempted = 0;
+  const subjectStats = {};
+
+  test.questions.forEach((q, i) => {
+    if (!subjectStats[q.subject]) subjectStats[q.subject] = { correct: 0, total: 0 };
+    subjectStats[q.subject].total++;
+    if (state.answers[i] === undefined) {
+      unattempted++;
+    } else if (state.answers[i] === q.correct) {
+      correct++;
+      subjectStats[q.subject].correct++;
+    } else {
+      incorrect++;
+    }
+  });
+
+  const netScore = Number(((correct * posMark) - (incorrect * negMark)).toFixed(2));
+  const negLost = Number((incorrect * negMark).toFixed(2));
+  const attempted = correct + incorrect;
+  const accuracy = attempted ? Math.round((correct / attempted) * 100) : 0;
+  const maxScore = Number((test.questions.length * posMark).toFixed(2));
+
+  const attempt = {
+    id: "att_" + Date.now(),
+    testId: test.id,
+    testTitle: test.title,
+    paperType: test.paperType,
+    date: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+    netScore,
+    maxScore,
+    negLost,
+    accuracy,
+    correct,
+    incorrect,
+    unattempted,
+    answers: { ...state.answers },
+    marked: { ...state.marked },
+    timeSpent: { ...state.timeSpent },
+    mistakeTags: {},
+    subjectStats
+  };
+
+  state.attempts.unshift(attempt);
+  state.activeAttemptId = attempt.id;
+  state.reviewFilter = "all";
+  saveState();
+  navigate("results");
+}
+
+function toggleBookmark(testId, qNo) {
+  const key = `${testId}::${qNo}`;
+  const idx = state.bookmarks.indexOf(key);
+  if (idx >= 0) state.bookmarks.splice(idx, 1);
+  else state.bookmarks.push(key);
+  saveState();
+  render();
+}
+
+function setMistakeTag(attemptId, qIdx, tag) {
+  const att = state.attempts.find(a => a.id === attemptId);
+  if (!att) return;
+  att.mistakeTags[qIdx] = att.mistakeTags[qIdx] === tag ? "" : tag;
+  saveState();
+  render();
+}
+
+/* ========================
+   ADMIN PANEL & BULK CSV
+   ======================== */
+function openAdminGate() {
+  if (state.adminUnlocked) {
+    navigate("admin");
+    return;
+  }
+  showModal(`
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="text-lg font-bold text-slate-900">Admin Access</h3>
+      <button onclick="closeModal()" class="text-slate-400 text-xl">&times;</button>
+    </div>
+    <p class="text-xs text-slate-500 mb-3">Enter your TARGET-IAS admin passcode to upload CSV mock tests or update payment settings. (Default: <code>target2026</code>)</p>
+    <form onsubmit="unlockAdmin(event)" class="space-y-3">
+      <input id="admin-pass-input" type="password" required placeholder="Enter passcode" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm" />
+      <button type="submit" class="w-full py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm">Open Admin Panel</button>
+    </form>
+  `);
+}
+
+function unlockAdmin(e) {
+  e.preventDefault();
+  const val = document.getElementById("admin-pass-input").value.trim();
+  if (val === state.config.adminPasscode) {
+    state.adminUnlocked = true;
+    closeModal();
+    navigate("admin");
+  } else {
+    alert("Incorrect passcode.");
+  }
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], col = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i], next = text[i + 1];
+    if (inQuotes) {
+      if (ch === '"' && next === '"') { col += '"'; i++; }
+      else if (ch === '"') inQuotes = false;
+      else col += ch;
+    } else {
+      if (ch === '"') inQuotes = true;
+      else if (ch === ",") { row.push(col.trim()); col = ""; }
+      else if (ch === "\n" || ch === "\r") {
+        if (ch === "\r" && next === "\n") i++;
+        row.push(col.trim());
+        if (row.some(c => c !== "")) rows.push(row);
+        row = []; col = "";
+      } else col += ch;
+    }
+  }
+  if (col.length || row.length) {
+    row.push(col.trim());
+    if (row.some(c => c !== "")) rows.push(row);
+  }
+  return rows;
+}
+
+function handleCSVUpload(e) {
+  e.preventDefault();
+  const title = document.getElementById("adm-title").value.trim();
+  const category = document.getElementById("adm-cat").value;
+  const paperType = document.getElementById("adm-paper").value;
+  const durationMins = Number(document.getElementById("adm-dur").value) || 120;
+  const isFree = document.getElementById("adm-free").checked;
+  const syllabus = document.getElementById("adm-syl").value.trim() || "Full Syllabus";
+  const fileInput = document.getElementById("adm-csv");
+
+  if (!fileInput.files.length) {
+    alert("Please select a .csv file first.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const rows = parseCSV(ev.target.result);
+    if (rows.length < 2) {
+      alert("CSV must contain a header row and at least 1 question.");
+      return;
+    }
+    const mapAns = { A: 0, B: 1, C: 2, D: 3, "0": 0, "1": 1, "2": 2, "3": 3 };
+    const questions = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (r.length < 10) continue;
+      questions.push({
+        no: Number(r[0]) || i,
+        subject: r[1] || "General Studies",
+        topic: r[2] || "Core",
+        text: r[3],
+        options: [r[4], r[5], r[6], r[7]],
+        correct: mapAns[(r[8] || "A").toUpperCase()] ?? 0,
+        axiom: r[9] || "Core principle verified from standard sources.",
+        deduction: r[10] || "",
+        trap: r[11] || ""
+      });
+    }
+    if (!questions.length) {
+      alert("No valid questions found in CSV. Check the column order.");
+      return;
+    }
+    state.tests.unshift({
+      id: "custom_" + Date.now(),
+      title, category, paperType, durationMins, isFree, syllabus, questions
+    });
+    saveState();
+    alert(`Published "${title}" with ${questions.length} questions!`);
+    render();
+  };
+  reader.readAsText(fileInput.files[0]);
+}
+
+function downloadSampleCSV() {
+  const sample = [
+    "question_no,subject,topic,question_text,option_a,option_b,option_c,option_d,correct_option,core_axiom,deduction,trap_diagnosis",
+    '1,Polity,Money Bills,"Under Article 110 of the Constitution of India, who has the final authority to decide whether a Bill is a Money Bill?",President of India,Speaker of the Lok Sabha,Union Finance Minister,Chairman of the Rajya Sabha,B,"Article 110(3) vests final certification authority in the Speaker of the Lok Sabha.","When any question arises whether a Bill is a Money Bill, the decision of the Speaker of the House of the People thereon shall be final.","Students often confuse the President\'s prior recommendation (Article 117) with final certification (Article 110)."'
+  ].join("\n");
+  const blob = new Blob([sample], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "target-ias-sample.csv";
+  a.click();
+}
+
+function saveAdminSettings(e) {
+  e.preventDefault();
+  state.config.bundlePrice = Number(document.getElementById("cfg-price").value) || 1499;
+  state.config.couponCode = document.getElementById("cfg-coupon").value.trim().toUpperCase() || "TARGET20";
+  state.config.couponDiscount = Number(document.getElementById("cfg-disc").value) || 20;
+  state.config.externalCheckoutUrl = document.getElementById("cfg-ext-url").value.trim();
+  state.config.supportEmail = document.getElementById("cfg-email").value.trim() || "support@targetias.in";
+  saveState();
+  alert("Settings saved!");
+  render();
+}
+
+function deleteTest(testId) {
+  if (!confirm("Delete this mock test?")) return;
+  state.tests = state.tests.filter(t => t.id !== testId);
+  saveState();
+  render();
+}
+
+function toggleTestFree(testId) {
+  const t = state.tests.find(x => x.id === testId);
+  if (t) {
+    t.isFree = !t.isFree;
+    saveState();
+    render();
+  }
+}
+
+/* ========================
+   VIEW RENDERERS
+   ======================== */
+function render() {
+  updateHeader();
+  const root = document.getElementById("app");
+  if (state.view === "landing") root.innerHTML = renderLanding();
+  else if (state.view === "dashboard") root.innerHTML = renderDashboard();
+  else if (state.view === "exam") root.innerHTML = renderExam();
+  else if (state.view === "results") root.innerHTML = renderResults();
+  else if (state.view === "bookmarks") root.innerHTML = renderBookmarks();
+  else if (state.view === "pricing") root.innerHTML = renderPricing();
+  else if (state.view === "admin") root.innerHTML = renderAdmin();
+}
+
+function renderLanding() {
+  return `
+    <section class="bg-slate-900 text-white rounded-3xl p-6 sm:p-12 shadow-xl relative overflow-hidden">
+      <div class="max-w-3xl relative z-10">
+        <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold mb-4">
+          UPSC CSE PRELIMS 2026–27 PATTERN
+        </span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+          Crack Prelims Through <span class="text-emerald-400">First-Principles</span>, Not Rote Guesswork.
+        </h1>
+        <p class="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed">
+          TARGET-IAS blends Bare Act, NCERT, and daily newspaper concepts into authentic Assertion–Reason and Pair-Counting mocks—backed by 3-layer explanations and subject-wise error diagnostics.
+        </p>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <button onclick="startTest('open-mock-01')" class="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition shadow-lg">
+            Attempt Free All-India Open Mock 01 →
+          </button>
+          <button onclick="navigate('pricing')" class="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition">
+            View Full Test Series (₹${state.config.bundlePrice})
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid md:grid-cols-3 gap-4 mt-8">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">01 • Exact UPSC Mechanics</div>
+        <h3 class="font-bold text-slate-900 text-base">GS (+2 / -0.66) & CSAT (+2.5 / -0.83)</h3>
+        <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Live countdown timer, color-coded Question Palette, and built-in option strike-through for elimination practice on phone or desktop.</p>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">02 • 3-Layer Answer Keys</div>
+        <h3 class="font-bold text-slate-900 text-base">Axiom → Deduction → Trap</h3>
+        <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Every solution isolates the underlying statutory or economic rule, walks through logical deduction, and diagnoses why wrong options trap aspirants.</p>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">03 • Error Diagnostics</div>
+        <h3 class="font-bold text-slate-900 text-base">Turn Silly Errors Into Marks</h3>
+        <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">Tag every mistake (Conceptual Gap vs. Over-Attempted Guess), track subject-wise accuracy bars, and save tough MCQs to your Revision Notebook.</p>
+      </div>
+    </section>
+  `;
+}
+
+function renderDashboard() {
+  const avgScore = state.attempts.length
+    ? (state.attempts.reduce((s, a) => s + a.netScore, 0) / state.attempts.length).toFixed(1)
+    : "—";
+
+  return `
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-900">Prelims Mock Test Dashboard</h1>
+        <p class="text-xs text-slate-500">Select a mock test below. Free diagnostic tests are open immediately.</p>
+      </div>
+      ${!isPaid() ? `<button onclick="navigate('pricing')" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold self-start sm:self-auto">Unlock All Paid Tests →</button>` : ""}
+    </div>
+
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div class="bg-white p-4 rounded-xl border border-slate-200">
+        <div class="text-[11px] text-slate-500 font-semibold">Tests Available</div>
+        <div class="text-xl font-extrabold text-slate-900 mt-0.5">${state.tests.length}</div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200">
+        <div class="text-[11px] text-slate-500 font-semibold">Attempted</div>
+        <div class="text-xl font-extrabold text-emerald-600 mt-0.5">${state.attempts.length}</div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200">
+        <div class="text-[11px] text-slate-500 font-semibold">Avg. Net Score</div>
+        <div class="text-xl font-extrabold text-slate-900 mt-0.5">${avgScore}</div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      ${state.tests.map(t => {
+        const locked = !t.isFree && !isPaid();
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col justify-between shadow-xs hover:border-slate-400 transition">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${t.paperType === 'CSAT' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'}">${escapeHtml(t.category)} • ${t.paperType}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${t.isFree ? 'bg-emerald-100 text-emerald-800' : (locked ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800')}">
+                  ${t.isFree ? 'FREE' : (locked ? '🔒 LOCKED' : 'UNLOCKED')}
+                </span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base leading-snug">${escapeHtml(t.title)}</h3>
+              <p class="text-xs text-slate-500 mt-1.5">${escapeHtml(t.syllabus)}</p>
+              <div class="flex gap-4 text-xs text-slate-600 mt-3 font-medium">
+                <span>⏱ ${t.durationMins} mins</span>
+                <span>📋 ${t.questions.length} MCQs</span>
+                <span>${t.paperType === 'CSAT' ? '+2.5 / -0.83' : '+2.0 / -0.66'}</span>
+              </div>
+            </div>
+            <button onclick="startTest('${t.id}')" class="mt-5 w-full py-2.5 rounded-xl font-bold text-xs transition ${locked ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-900 hover:bg-slate-800 text-white'}">
+              ${locked ? 'Unlock Test Series →' : 'Start Mock Test'}
+            </button>
+          </div>
+        `;
+      }).join("")}
+    </div>
+
+    ${state.attempts.length ? `
+      <div class="mt-8">
+        <h2 class="text-base font-bold text-slate-900 mb-3">Recent Attempts</h2>
+        <div class="space-y-2">
+          ${state.attempts.map(a => `
+            <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
+              <div>
+                <div class="font-bold text-sm text-slate-900">${escapeHtml(a.testTitle)}</div>
+                <div class="text-xs text-slate-500">${a.date} • Net: <strong>${a.netScore}/${a.maxScore}</strong> • Accuracy: ${a.accuracy}%</div>
+              </div>
+              <button onclick="state.activeAttemptId='${a.id}'; navigate('results');" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold text-xs">View Analysis</button>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    ` : ""}
+  `;
+}
+
+function renderExam() {
+  const test = state.activeTest;
+  const q = test.questions[state.qIndex];
+  const letters = ["(a)", "(b)", "(c)", "(d)"];
+  const marksLabel = test.paperType === "CSAT" ? "+2.50 / -0.83" : "+2.00 / -0.66";
+
+  const paletteItems = test.questions.map((_, i) => {
+    let cls = "bg-slate-100 text-slate-700 border-slate-300";
+    if (state.marked[i]) cls = "bg-purple-600 text-white border-purple-700";
+    else if (state.answers[i] !== undefined) cls = "bg-emerald-600 text-white border-emerald-700";
+    else if (state.visited[i]) cls = "bg-red-500 text-white border-red-600";
+    const ring = i === state.qIndex ? "ring-2 ring-slate-900 ring-offset-1" : "";
+    return `<button onclick="goToQuestion(${i})" class="h-9 rounded-lg border text-xs font-bold ${cls} ${ring}">${i + 1}</button>`;
+  }).join("");
+
+  return `
+    <!-- Sticky Exam Status Bar -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+      <div>
+        <div class="font-bold text-sm text-slate-900">${escapeHtml(test.title)}</div>
+        <div class="text-[11px] text-slate-500">Q ${state.qIndex + 1} of ${test.questions.length} • ${escapeHtml(q.subject)} (${marksLabel})</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="exam-timer" class="px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-300 font-mono font-bold text-xs sm:text-sm">
+          ${formatTime(state.remainingSecs)}
+        </div>
+        <button onclick="state.paletteOpen = !state.paletteOpen; render();" class="lg:hidden px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-300 text-xs font-bold">
+          Palette
+        </button>
+        <button onclick="confirmSubmitExam()" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs">
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-5 items-start">
+      <!-- Question Panel -->
+      <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-slate-900">Question ${state.qIndex + 1}</span>
+          <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">${escapeHtml(q.subject)} • ${escapeHtml(q.topic)}</span>
+        </div>
+
+        <div class="text-sm sm:text-base text-slate-900 leading-relaxed whitespace-pre-line font-medium mb-5">
+          ${escapeHtml(q.text)}
+        </div>
+
+        <div class="space-y-2.5">
+          ${q.options.map((opt, idx) => {
+            const selected = state.answers[state.qIndex] === idx;
+            const struck = state.strikes[`${state.qIndex}-${idx}`];
+            return `
+              <div onclick="selectOption(${idx})" class="cursor-pointer p-3.5 rounded-xl border transition flex items-start justify-between gap-3 ${selected ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 hover:border-slate-400 bg-white text-slate-800'}">
+                <div class="text-sm leading-snug ${struck ? 'line-strike' : ''}">
+                  <span class="font-bold mr-1.5">${letters[idx]}</span> ${escapeHtml(opt)}
+                </div>
+                <button onclick="toggleStrike(event, ${idx})" title="Strike out eliminated option" class="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded border ${selected ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-500 hover:bg-slate-100'}">
+                  S
+                </button>
+              </div>
+            `;
+          }).join("")}
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex gap-2">
+            <button onclick="clearResponse()" class="px-3 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50">Clear</button>
+            <button onclick="markAndNext()" class="px-3 py-2 rounded-lg border border-purple-300 bg-purple-50 text-xs font-semibold text-purple-800 hover:bg-purple-100">
+              ${state.marked[state.qIndex] ? 'Unmark & Next' : 'Mark for Review'}
+            </button>
+          </div>
+          <button onclick="saveAndNext()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">
+            Save & Next →
+          </button>
+        </div>
+      </div>
+
+      <!-- Desktop + Mobile Slide Palette -->
+      <aside class="${state.paletteOpen ? 'block' : 'hidden'} lg:block lg:col-span-4 bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm text-slate-900">Question Palette</h3>
+          <button onclick="state.paletteOpen=false; render();" class="lg:hidden text-xs text-slate-500">Close</button>
+        </div>
+        <div class="grid grid-cols-5 gap-2 mb-4">${paletteItems}</div>
+        <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600 pt-3 border-t border-slate-200">
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600"></span> Answered</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-red-500"></span> Not Answered</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-purple-600"></span> Marked</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-200 border border-slate-300"></span> Not Visited</div>
+        </div>
+      </aside>
+    </div>
+  `;
+}
+
+function renderResults() {
+  const att = state.attempts.find(a => a.id === state.activeAttemptId) || state.attempts[0];
+  if (!att) return `<p class="text-sm text-slate-500">No attempts yet.</p>`;
+  const test = state.tests.find(t => t.id === att.testId) || DEFAULT_TESTS[0];
+  const letters = ["(a)", "(b)", "(c)", "(d)"];
+
+  const subjectBars = Object.entries(att.subjectStats).map(([subj, d]) => {
+    const pct = Math.round((d.correct / d.total) * 100);
+    return `
+      <div>
+        <div class="flex justify-between text-xs font-semibold mb-1">
+          <span>${escapeHtml(subj)}</span>
+          <span>${d.correct}/${d.total} (${pct}%)</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full bg-slate-900 rounded-full" style="width:${pct}%"></div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const filteredQs = test.questions.map((q, i) => ({ q, i })).filter(({ q, i }) => {
+    const ans = att.answers[i];
+    if (state.reviewFilter === "correct") return ans === q.correct;
+    if (state.reviewFilter === "incorrect") return ans !== undefined && ans !== q.correct;
+    if (state.reviewFilter === "unattempted") return ans === undefined;
+    return true;
+  });
+
+  return `
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900">Diagnostic Scorecard</h1>
+        <p class="text-xs text-slate-500">${escapeHtml(att.testTitle)} • ${att.date}</p>
+      </div>
+      <button onclick="navigate('dashboard')" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">← Dashboard</button>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200">
+        <div class="text-xs text-slate-500 font-semibold">Net Score</div>
+        <div class="text-2xl font-black text-slate-900 mt-1">${att.netScore} <span class="text-xs font-normal text-slate-400">/ ${att.maxScore}</span></div>
+      </div>
+      <div class="bg-white p-4 rounded-2xl border border-slate-200">
+        <div class="text-xs text-slate-500 font-semibold">Accuracy</div>
+        <div class="text-2xl font-black text-emerald-600 mt-1">${att.accuracy}%</div>
+      </div>
+      <div class="bg-white p-4 rounded-2xl border border-slate-200">
+        <div class="text-xs text-slate-500 font-semibold">Negative Marks Lost</div>
+        <div class="text-2xl font-black text-red-600 mt-1">-${att.negLost}</div>
+      </div>
+      <div class="bg-white p-4 rounded-2xl border border-slate-200">
+        <div class="text-xs text-slate-500 font-semibold">Split (C / W / U)</div>
+        <div class="text-xl font-black text-slate-900 mt-1">${att.correct} / ${att.incorrect} / ${att.unattempted}</div>
+      </div>
+    </div>
+
+    <div class="bg-white p-5 rounded-2xl border border-slate-200 mb-6">
+      <h2 class="font-bold text-sm text-slate-900 mb-3">Subject-Wise Accuracy</h2>
+      <div class="grid sm:grid-cols-2 gap-4">${subjectBars}</div>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <h2 class="font-bold text-base text-slate-900">First-Principles Solution Review</h2>
+      <div class="flex gap-1.5 text-xs">
+        ${["all", "correct", "incorrect", "unattempted"].map(f => `
+          <button onclick="state.reviewFilter='${f}'; render();" class="px-3 py-1.5 rounded-lg font-semibold capitalize ${state.reviewFilter === f ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-600'}">${f}</button>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      ${filteredQs.map(({ q, i }) => {
+        const userAns = att.answers[i];
+        const isRight = userAns === q.correct;
+        const isUn = userAns === undefined;
+        const bKey = `${test.id}::${q.no}`;
+        const bookmarked = state.bookmarks.includes(bKey);
+        const tag = att.mistakeTags[i] || "";
+
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-extrabold text-slate-900">Q${i + 1}</span>
+                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${isUn ? 'bg-slate-100 text-slate-600' : (isRight ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700')}">
+                  ${isUn ? 'Unattempted' : (isRight ? '✓ Correct' : '✗ Incorrect')}
+                </span>
+                <span class="text-[11px] text-slate-500">⏱ ${att.timeSpent[i] || 0}s</span>
+              </div>
+              <button onclick="toggleBookmark('${test.id}', ${q.no})" class="text-xs font-semibold px-2.5 py-1 rounded-lg border ${bookmarked ? 'bg-amber-50 border-amber-300 text-amber-800' : 'border-slate-200 text-slate-600'}">
+                ${bookmarked ? '🔖 Bookmarked' : 'Bookmark'}
+              </button>
+            </div>
+
+            <div class="text-sm text-slate-900 whitespace-pre-line font-medium mb-3">${escapeHtml(q.text)}</div>
+
+            <div class="grid sm:grid-cols-2 gap-2 text-xs mb-4">
+              ${q.options.map((opt, oIdx) => {
+                let style = "border-slate-200 bg-slate-50 text-slate-700";
+                if (oIdx === q.correct) style = "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold";
+                else if (oIdx === userAns && userAns !== q.correct) style = "border-red-400 bg-red-50 text-red-800 font-semibold";
+                return `<div class="p-2.5 rounded-lg border ${style}">${letters[oIdx]} ${escapeHtml(opt)}</div>`;
+              }).join("")}
+            </div>
+
+            ${!isRight ? `
+              <div class="flex flex-wrap items-center gap-1.5 mb-4 text-[11px]">
+                <span class="text-slate-500 font-semibold">Tag Mistake:</span>
+                ${["Conceptual Gap", "Silly Error", "Over-Attempted Guess"].map(t => `
+                  <button onclick="setMistakeTag('${att.id}', ${i}, '${t}')" class="px-2.5 py-1 rounded-full border font-semibold ${tag === t ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-300'}">${t}</button>
+                `).join("")}
+              </div>
+            ` : ""}
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-xs leading-relaxed">
+              <div><strong class="text-slate-900 uppercase tracking-wide">1. Core Axiom:</strong> <span class="text-slate-700">${escapeHtml(q.axiom)}</span></div>
+              <div><strong class="text-slate-900 uppercase tracking-wide">2. Deduction:</strong> <span class="text-slate-700">${escapeHtml(q.deduction)}</span></div>
+              <div><strong class="text-red-700 uppercase tracking-wide">3. Trap Diagnosis:</strong> <span class="text-slate-700">${escapeHtml(q.trap)}</span></div>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderBookmarks() {
+  const items = [];
+  state.bookmarks.forEach(key => {
+    const [tid, qNo] = key.split("::");
+    const test = state.tests.find(t => t.id === tid);
+    const q = test?.questions.find(x => String(x.no) === String(qNo));
+    if (test && q) items.push({ test, q });
+  });
+
+  return `
+    <h1 class="text-2xl font-extrabold text-slate-900 mb-1">Revision Notebook</h1>
+    <p class="text-xs text-slate-500 mb-6">Your bookmarked high-yield traps and First-Principles explanations.</p>
+    ${!items.length ? `
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+        <p class="text-sm text-slate-600">No bookmarked questions yet. Bookmark questions from your Post-Test Solution Review.</p>
+        <button onclick="navigate('dashboard')" class="mt-4 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Go to Mock Tests</button>
+      </div>
+    ` : `
+      <div class="space-y-4">
+        ${items.map(({ test, q }) => `
+          <div class="bg-white rounded-2xl border border-slate-200 p-5">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-emerald-700">${escapeHtml(test.title)} • ${escapeHtml(q.subject)}</span>
+              <button onclick="toggleBookmark('${test.id}', ${q.no})" class="text-xs text-red-600 font-semibold">Remove</button>
+            </div>
+            <div class="text-sm font-medium whitespace-pre-line mb-3">${escapeHtml(q.text)}</div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1">
+              <div><strong>Answer:</strong> ${escapeHtml(q.options[q.correct])}</div>
+              <div><strong>Core Axiom:</strong> ${escapeHtml(q.axiom)}</div>
+              <div><strong>Trap:</strong> ${escapeHtml(q.trap)}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `}
+  `;
+}
+
+function renderPricing() {
+  const finalPrice = getFinalPrice();
+  const discounted = finalPrice < state.config.bundlePrice;
+
+  return `
+    <div class="max-w-xl mx-auto">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Unlock Complete TARGET-IAS Series</h1>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1">One-time access to all GS Sectional, Full-Length Simulators, and CSAT Prelims Mocks.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border-2 border-slate-900 p-6 sm:p-8 shadow-lg">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">Prelims 2026–27 Bundle</span>
+            <h2 class="text-xl font-extrabold text-slate-900 mt-2">All-Access Mock Series</h2>
+          </div>
+          <div class="text-right">
+            ${discounted ? `<div class="text-xs text-slate-400 line-through">₹${state.config.bundlePrice}</div>` : ""}
+            <div class="text-3xl font-black text-slate-900">₹${finalPrice}</div>
+          </div>
+        </div>
+
+        <ul class="text-xs sm:text-sm text-slate-700 space-y-2 mb-6">
+          <li>✓ Full GS Paper I & CSAT Paper II Timed Simulators</li>
+          <li>✓ Daily Newspaper Current-to-Static Audited MCQs</li>
+          <li>✓ 3-Layer First-Principles Explanations & Mistake Diagnostics</li>
+          <li>✓ Unlimited Revision Notebook Bookmarks</li>
+        </ul>
+
+        <!-- Coupon Box -->
+        <div class="flex gap-2 mb-5">
+          <input id="coupon-input" type="text" value="${escapeHtml(state.appliedCoupon)}" placeholder="Coupon code (try ${escapeHtml(state.config.couponCode)})" class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs uppercase font-semibold" />
+          <button onclick="applyCoupon()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-900">Apply</button>
+        </div>
+
+        ${isPaid() ? `
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm font-bold text-center">
+            ✓ Your Pro Access is Active!
+          </div>
+        ` : `
+          <button id="rzp-pay-btn" onclick="initiateRazorpayPayment()" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition">
+            Pay ₹${finalPrice} via Razorpay (UPI / Card)
+          </button>
+
+          ${state.config.externalCheckoutUrl ? `
+            <a href="${escapeHtml(state.config.externalCheckoutUrl)}" target="_blank" class="mt-3 block text-center w-full py-3 rounded-xl border-2 border-emerald-600 text-emerald-800 font-bold text-xs hover:bg-emerald-50 transition">
+              Alternate Checkout Link (No Personal UPI Shown) ↗
+            </a>
+          ` : ""}
+
+          <div class="mt-4 text-center text-[11px] text-slate-500">
+            100% Secure Checkout • UPI, RuPay, Visa, Mastercard & NetBanking
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function renderAdmin() {
+  return `
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-900">TARGET-IAS Admin Panel</h1>
+        <p class="text-xs text-slate-500">Upload mock tests via CSV from your phone and manage pricing or checkout links.</p>
+      </div>
+      <button onclick="navigate('dashboard')" class="px-3.5 py-2 rounded-xl bg-slate-200 text-slate-900 text-xs font-bold">Exit Admin</button>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- Bulk CSV Uploader -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold text-base text-slate-900">1. Bulk CSV Mock Test Uploader</h2>
+          <button onclick="downloadSampleCSV()" class="text-xs font-bold text-emerald-700 underline">Download Sample CSV</button>
+        </div>
+        <form onsubmit="handleCSVUpload(event)" class="space-y-3 text-xs">
+          <input id="adm-title" required placeholder="Test Title (e.g., GS Sectional 02: Polity)" class="w-full px-3 py-2 rounded-lg border border-slate-300" />
+          <div class="grid grid-cols-2 gap-2">
+            <select id="adm-cat" class="px-3 py-2 rounded-lg border border-slate-300">
+              <option>GS Sectional</option>
+              <option>Full-Length GS</option>
+              <option>Open Mock</option>
+              <option>CSAT</option>
+            </select>
+            <select id="adm-paper" class="px-3 py-2 rounded-lg border border-slate-300">
+              <option value="GS">GS (+2 / -0.66)</option>
+              <option value="CSAT">CSAT (+2.5 / -0.83)</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="adm-dur" type="number" value="120" placeholder="Duration (mins)" class="px-3 py-2 rounded-lg border border-slate-300" />
+            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 font-semibold">
+              <input id="adm-free" type="checkbox" /> Free Open Mock
+            </label>
+          </div>
+          <input id="adm-syl" placeholder="Syllabus / Topics Covered" class="w-full px-3 py-2 rounded-lg border border-slate-300" />
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Upload .csv File</label>
+            <input id="adm-csv" type="file" accept=".csv,text/csv" required class="w-full text-xs" />
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 text-white font-bold">Publish Mock Test</button>
+        </form>
+      </div>
+
+      <!-- Pricing & Free Payment Link Settings -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5">
+        <h2 class="font-bold text-base text-slate-900 mb-3">2. Pricing & Payment Settings</h2>
+        <form onsubmit="saveAdminSettings(event)" class="space-y-3 text-xs">
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block font-semibold mb-1">Price (₹)</label>
+              <input id="cfg-price" type="number" value="${state.config.bundlePrice}" class="w-full px-3 py-2 rounded-lg border border-slate-300" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Coupon</label>
+              <input id="cfg-coupon" value="${escapeHtml(state.config.couponCode)}" class="w-full px-3 py-2 rounded-lg border border-slate-300 uppercase" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Discount %</label>
+              <input id="cfg-disc" type="number" value="${state.config.couponDiscount}" class="w-full px-3 py-2 rounded-lg border border-slate-300" />
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Optional Free Hosted Payment Link (Topmate / Razorpay Page)</label>
+            <input id="cfg-ext-url" type="url" value="${escapeHtml(state.config.externalCheckoutUrl)}" placeholder="https://topmate.io/... or https://rzp.io/l/..." class="w-full px-3 py-2 rounded-lg border border-slate-300" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Brand Support Email (Footer & Policies)</label>
+            <input id="cfg-email" type="email" value="${escapeHtml(state.config.supportEmail)}" class="w-full px-3 py-2 rounded-lg border border-slate-300" />
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold">Save Configuration</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Manage Existing Tests -->
+    <div class="mt-6 bg-white rounded-2xl border border-slate-200 p-5">
+      <h2 class="font-bold text-base text-slate-900 mb-3">3. Published Mock Tests (${state.tests.length})</h2>
+      <div class="space-y-2 text-xs">
+        ${state.tests.map(t => `
+          <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50">
+            <div>
+              <div class="font-bold text-slate-900">${escapeHtml(t.title)}</div>
+              <div class="text-slate-500">${t.questions.length} Qs • ${t.paperType} • ${t.isFree ? 'FREE' : 'PAID'}</div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="toggleTestFree('${t.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 font-semibold">${t.isFree ? 'Make Paid' : 'Make Free'}</button>
+              <button onclick="deleteTest('${t.id}')" class="px-2.5 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200 font-semibold">Delete</button>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+// Initial Render
+render();
+</script>
+</body>
+</html>
